@@ -2,3 +2,5 @@ fastapi[standard]
 sqlalchemy
 googlemaps
 pydantic
+pytest
+starlette

@@ -10,4 +10,4 @@ app.include_router(tasks_router)
 
 @app.get("/")
 def read_root():
-    return "Server is running."
+    return {"message": "Server is running."}
