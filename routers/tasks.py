@@ -1,18 +1,25 @@
+from uuid import UUID
+
 from fastapi import APIRouter, HTTPException, Request
 from fastapi.params import Depends
-from sqlalchemy.orm import Session
-from db.core import NotFoundError, get_db
-from db.tasks import Task
+from db.models import NotFoundError
+from db.tasks import Task, create_db_task, read_db_task
 
 router = APIRouter(
     prefix="/api",
 )
 
 
-@router.get("/getResult")
-def get_task(request: Request, task_id: int, db: Session = Depends(get_db)) -> Task:
-    # try:
-    #     db_item = read_db_item(item_id, db)
-    # except NotFoundError as e:
-    #     raise HTTPException(status_code=404) from e
-    return Task(id=1, status="running")
+@router.get("/create_task")
+def create_task(request: Request) -> Task:
+    db_task = create_db_task()
+    return Task(**db_task.__dict__)
+
+
+@router.get("/{task_id}")
+def read_item(request: Request, item_id: UUID) -> Task:
+    try:
+        db_task = read_db_task(item_id)
+    except NotFoundError as e:
+        raise HTTPException(status_code=404) from e
+    return Task(**db_task.__dict__)

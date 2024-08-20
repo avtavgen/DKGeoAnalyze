@@ -1,5 +1,8 @@
 fastapi[standard]
-sqlalchemy
+psycopg2
+alembic
+python-dotenv
+fastapi_sqlalchemy
 googlemaps
 pydantic
 pytest

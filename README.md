@@ -33,7 +33,7 @@ pip install -r requirements.txt
 fastapi run main.py
 ```
 
-### Run test
+### Run tests
 
 ```
 pytest tests/tests.py
@@ -48,7 +48,7 @@ docker-compose up -d --build
 http://0.0.0.0/
 ```
 
-### Run test
+### Run tests
 
 ```
 docker-compose exec web pytest tests/tests.py
