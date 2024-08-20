@@ -13,7 +13,7 @@ class Base(DeclarativeBase):
     pass
 
 
-class DBItem(Base):
+class DBTask(Base):
     __tablename__ = "tasks"
 
     id: Mapped[int] = mapped_column(primary_key=True, index=True)
