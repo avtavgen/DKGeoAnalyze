@@ -1,4 +1,7 @@
 import uuid
+from typing import List, Optional
+
+from pydantic import BaseModel
 from sqlmodel import SQLModel, Field
 from enum import auto, StrEnum
 
@@ -39,3 +42,20 @@ class Link(SQLModel, table=True):
 class DBTask(SQLModel, table=True):
     id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
     status: StatusEnum = Field(default=StatusEnum.CREATED, nullable=False)
+
+
+class PPoint(BaseModel):
+    name: str
+    address: str
+
+
+class PLink(BaseModel):
+    name: str
+    distance: str
+
+
+class Ptask(BaseModel):
+    id: str
+    status: str
+    points: Optional[List[PPoint]] = None
+    links: Optional[List[PLink]] = None

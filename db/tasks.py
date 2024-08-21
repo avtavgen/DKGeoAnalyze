@@ -107,14 +107,4 @@ async def get_all_links_for_task(task_id: UUID) -> List[Link]:
         return links
 
 
-async def update_task_data(task_id: UUID, links: List[Link], points: List[Point]) -> DBTask:
-    async with scoped_session() as session:
-        task = await session.get(DBTask, task_id)
-        if task is None:
-            raise NotFoundError(f"Task with id {task_id} not found.")
-        task.links = links
-        task.points = points
-        session.add(task)
-        await session.commit()
-        await session.refresh(task)
-        return task
+

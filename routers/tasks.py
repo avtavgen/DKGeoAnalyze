@@ -3,9 +3,9 @@ from uuid import UUID
 from fastapi import File, APIRouter, HTTPException, Request, UploadFile
 from fastapi.params import Depends
 
-from db.models import NotFoundError, DBTask, StatusEnum
+from db.models import NotFoundError, DBTask, StatusEnum, Ptask, PPoint, PLink
 from db.tasks import create_db_task, read_db_task, upload_file, update_task_status, get_all_links_for_task, \
-    get_all_points_for_task, update_task_data
+    get_all_points_for_task
 from db.core import get_session
 from service.celery_tasks import task_main
 
@@ -26,13 +26,15 @@ async def post_upload_file(file: UploadFile = File(...), session: AsyncSession =
 
 
 @router.get("/getResult")
-async def read_item(request: Request, item_id: UUID, session: AsyncSession = Depends(get_session)) -> DBTask:
+async def read_item(request: Request, item_id: UUID, session: AsyncSession = Depends(get_session)) -> Ptask:
     try:
         db_task = await read_db_task(item_id, session)
+        task_response = Ptask(id=str(db_task.id), status=db_task.status)
         if db_task.status == StatusEnum.DONE:
             lnk = await get_all_links_for_task(task_id=db_task.id)
             pnt = await get_all_points_for_task(task_id=db_task.id)
-            await update_task_data(task_id=db_task.id, links=lnk, points=pnt)
+            task_response.points = [PPoint(name=point.name, address=point.address) for point in pnt]
+            task_response.links = [PLink(name=link.name, distance=link.distance) for link in lnk]
     except NotFoundError as e:
         raise HTTPException(status_code=404) from e
-    return db_task
+    return task_response
