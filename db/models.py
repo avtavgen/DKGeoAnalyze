@@ -1,10 +1,9 @@
-from enum import Enum, auto
-from uuid import UUID
+import uuid
+from sqlmodel import SQLModel, Field
+from enum import auto, StrEnum
 
-from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 
-
-class StatusEnum(Enum):
+class StatusEnum(StrEnum):
     CREATED = auto()
     RUNNING = auto()
     FAILED = auto()
@@ -14,12 +13,6 @@ class NotFoundError(Exception):
     pass
 
 
-class Base(DeclarativeBase):
-    pass
-
-
-class DBTask(Base):
-    __tablename__ = "tasks"
-
-    id: Mapped[UUID] = mapped_column(primary_key=True)
-    status: Mapped[StatusEnum]
+class DBTask(SQLModel, table=True):
+    id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
+    status: StatusEnum = Field(default=StatusEnum.CREATED, nullable=False)

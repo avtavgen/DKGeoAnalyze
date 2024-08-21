@@ -1,28 +1,20 @@
-from typing import Optional, Type
-from uuid import UUID, uuid4
+from uuid import UUID
 
-from pydantic import BaseModel
-
-from db.models import StatusEnum, DBTask, NotFoundError
-from fastapi_sqlalchemy import db
+from db.models import DBTask, NotFoundError
+from sqlmodel.ext.asyncio.session import AsyncSession
 
 
-class Task(BaseModel):
-    id: UUID
-    status: StatusEnum
-
-
-def read_db_task(task_id: UUID) -> Type[DBTask]:
-    db_task = db.session.query(DBTask).filter(DBTask.id == task_id).first()
-    if db_task is None:
+async def read_db_task(task_id: UUID, session: AsyncSession) -> DBTask:
+    task = await session.get(DBTask, task_id)
+    if task is None:
         raise NotFoundError(f"Task with id {task_id} not found.")
-    return db_task
+    return task
 
 
-def create_db_task() -> DBTask:
-    db_task = DBTask(id=uuid4(), status=StatusEnum.CREATED)
-    db.session.add(db_task)
-    db.session.commit()
-    db.session.refresh(db_task)
+async def create_db_task(session: AsyncSession) -> DBTask:
+    task = DBTask()
+    session.add(task)
+    await session.commit()
+    await session.refresh(task)
 
-    return db_task
+    return task

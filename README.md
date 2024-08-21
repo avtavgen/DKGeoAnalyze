@@ -41,11 +41,11 @@ pytest tests/tests.py
 
 ## Run with docker
 
-### Run server
+### Run server (http://0.0.0.0/)
 
 ```
-docker-compose up -d --build
-http://0.0.0.0/
+$ docker-compose up -d --build
+$ docker-compose exec web alembic upgrade head
 ```
 
 ### Run tests
