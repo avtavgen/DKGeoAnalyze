@@ -7,3 +7,5 @@ googlemaps
 pydantic
 pytest
 starlette
+celery
+redis

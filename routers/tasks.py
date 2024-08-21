@@ -1,10 +1,12 @@
 from uuid import UUID
 
-from fastapi import APIRouter, HTTPException, Request
+from fastapi import File, APIRouter, HTTPException, Request, UploadFile
 from fastapi.params import Depends
+
 from db.models import NotFoundError, DBTask
-from db.tasks import create_db_task, read_db_task
+from db.tasks import create_db_task, read_db_task, upload_file
 from db.core import get_session
+from service.celery_tasks import task_main, TaskOut, _to_task_out
 
 from sqlmodel.ext.asyncio.session import AsyncSession
 
@@ -13,13 +15,15 @@ router = APIRouter(
 )
 
 
-@router.get("/create_task")
-async def create_task(request: Request, session: AsyncSession = Depends(get_session)) -> DBTask:
+@router.post("/calculateDistances")
+async def post_upload_file(file: UploadFile = File(...), session: AsyncSession = Depends(get_session)) -> TaskOut:
     db_task = await create_db_task(session)
-    return db_task
+    await upload_file(file, session)
+    task = task_main.delay(db_task_id=db_task.id)
+    return _to_task_out(task)
 
 
-@router.get("/{task_id}")
+@router.get("/getResult/{task_id}")
 async def read_item(request: Request, item_id: UUID, session: AsyncSession = Depends(get_session)) -> DBTask:
     try:
         db_task = await read_db_task(item_id, session)
