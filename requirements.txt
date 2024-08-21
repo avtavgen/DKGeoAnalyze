@@ -10,3 +10,4 @@ starlette
 celery
 redis
 requests
+geopy
