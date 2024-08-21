@@ -5,7 +5,7 @@ services:
     build: .
     command: fastapi run main.py --port 80
     environment:
-      - DATABASE_URL=postgresql+asyncpg://postgres:Qwerty15@postgres:5432/test3
+      - DATABASE_URL=postgresql+asyncpg://postgres:postgres@postgres:5432/foo
     volumes:
       - .:/app
     ports:
@@ -19,5 +19,5 @@ services:
       - 5432
     environment:
       - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=Qwerty15
-      - POSTGRES_DB=test3
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=foo
