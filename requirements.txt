@@ -3,9 +3,10 @@ asyncpg
 alembic
 sqlmodel
 sqlalchemy_utils
-googlemaps
+reverse-geocode
 pydantic
 pytest
 starlette
 celery
 redis
+requests

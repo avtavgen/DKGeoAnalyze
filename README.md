@@ -5,6 +5,7 @@ FastAPI Rest example project.
 ## Preconditions:
 
 - Python 3.12
+- PostgreSQL
 
 ## Clone the project
 

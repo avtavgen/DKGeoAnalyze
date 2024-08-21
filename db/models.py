@@ -6,6 +6,7 @@ from enum import auto, StrEnum
 class StatusEnum(StrEnum):
     CREATED = auto()
     RUNNING = auto()
+    DONE = auto()
     FAILED = auto()
 
 
@@ -24,3 +25,17 @@ class CSVData(SQLModel, table=True):
     country: str = Field(default="None", nullable=False)
     latitude: str = Field(default="None", nullable=False)
     longitude: str = Field(default="None", nullable=False)
+
+
+class Point(SQLModel, table=True):
+    id: int | None = Field(default=None, primary_key=True)
+    task_id: uuid.UUID | None = Field(default=None, foreign_key="dbtask.id")
+    name: str = Field(default="None", nullable=False)
+    address: str = Field(default="None", nullable=False)
+
+
+class Link(SQLModel, table=True):
+    id: int | None = Field(default=None, primary_key=True)
+    task_id: uuid.UUID | None = Field(default=None, foreign_key="dbtask.id")
+    name: str = Field(default="None", nullable=False)
+    distance: str = Field(default="None", nullable=False)

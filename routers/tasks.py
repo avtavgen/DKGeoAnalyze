@@ -18,7 +18,7 @@ router = APIRouter(
 @router.post("/calculateDistances")
 async def post_upload_file(file: UploadFile = File(...), session: AsyncSession = Depends(get_session)) -> TaskOut:
     db_task = await create_db_task(session)
-    await upload_file(file, session)
+    await upload_file(file, session, db_task)
     task = task_main.delay(db_task_id=db_task.id)
     return _to_task_out(task)
 
