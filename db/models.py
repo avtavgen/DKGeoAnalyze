@@ -1,9 +1,9 @@
 import uuid
+from enum import auto, StrEnum
 from typing import List, Optional
 
 from pydantic import BaseModel
 from sqlmodel import SQLModel, Field
-from enum import auto, StrEnum
 
 
 class StatusEnum(StrEnum):
@@ -17,45 +17,46 @@ class NotFoundError(Exception):
     pass
 
 
-class CSVData(SQLModel, table=True):
+class TableBase(SQLModel):
     id: int | None = Field(default=None, primary_key=True)
-    task_id: uuid.UUID | None = Field(default=None, foreign_key="dbtask.id")
+    task_id: uuid.UUID | None = Field(default=None, foreign_key="task.id")
+
+
+class FileData(TableBase, table=True):
     country: str = Field(default="None", nullable=False)
     latitude: str = Field(default="None", nullable=False)
     longitude: str = Field(default="None", nullable=False)
 
 
-class Point(SQLModel, table=True):
-    id: int | None = Field(default=None, primary_key=True)
-    task_id: uuid.UUID | None = Field(default=None, foreign_key="dbtask.id")
+class ChildBase(TableBase):
     name: str = Field(default="None", nullable=False)
+
+
+class Point(ChildBase, table=True):
     address: str = Field(default="None", nullable=False)
 
 
-class Link(SQLModel, table=True):
-    id: int | None = Field(default=None, primary_key=True)
-    task_id: uuid.UUID | None = Field(default=None, foreign_key="dbtask.id")
-    name: str = Field(default="None", nullable=False)
+class Link(ChildBase, table=True):
     distance: str = Field(default="None", nullable=False)
 
 
-class DBTask(SQLModel, table=True):
+class Task(SQLModel, table=True):
     id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
     status: StatusEnum = Field(default=StatusEnum.CREATED, nullable=False)
 
 
-class PPoint(BaseModel):
+class PointResponse(BaseModel):
     name: str
     address: str
 
 
-class PLink(BaseModel):
+class LinkResponse(BaseModel):
     name: str
     distance: str
 
 
-class Ptask(BaseModel):
-    id: str
+class TaskResponse(BaseModel):
+    id: uuid.UUID
     status: str
-    points: Optional[List[PPoint]] = None
-    links: Optional[List[PLink]] = None
+    points: Optional[List[Point]] = None
+    links: Optional[List[Link]] = None

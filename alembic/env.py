@@ -7,7 +7,7 @@ from sqlalchemy.engine import Connection
 from sqlalchemy.ext.asyncio import async_engine_from_config
 from sqlmodel import SQLModel
 
-from db.models import DBTask, CSVData
+from db.models import Task, FileData, Point, Link
 
 
 from alembic import context

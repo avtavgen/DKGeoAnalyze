@@ -12,6 +12,8 @@ services:
       - 80:80
     depends_on:
       - postgres
+      - redis
+      - worker
 
   postgres:
     image: postgres:16.4
@@ -24,12 +26,14 @@ services:
 
   redis:
     image: redis
+    expose:
+      - 6379
 
   worker:
     build: .
-    command: celery -A worker.app worker --loglevel=info --logfile=logs/celery.log
+    command: celery -A worker.app worker
     volumes:
-      - ./project:/usr/src/app
+      - .:/app
     environment:
       - CELERY_BROKER_URL=redis://redis:6379/0
       - CELERY_RESULT_BACKEND=redis://redis:6379/0
