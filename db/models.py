@@ -3,7 +3,7 @@ from enum import auto, StrEnum
 from typing import List, Optional
 
 from pydantic import BaseModel
-from sqlmodel import SQLModel, Field
+from sqlmodel import SQLModel, Field, Relationship
 
 
 class StatusEnum(StrEnum):
@@ -30,19 +30,26 @@ class FileData(TableBase, table=True):
 
 class ChildBase(TableBase):
     name: str = Field(default="None", nullable=False)
+    task_id: uuid.UUID | None = Field(default=None, foreign_key="task.id")
 
 
 class Point(ChildBase, table=True):
     address: str = Field(default="None", nullable=False)
+    task: "Task" = Relationship(back_populates="points")
 
 
 class Link(ChildBase, table=True):
     distance: str = Field(default="None", nullable=False)
+    task: "Task" = Relationship(back_populates="links")
 
 
 class Task(SQLModel, table=True):
     id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
     status: StatusEnum = Field(default=StatusEnum.CREATED, nullable=False)
+    points: Optional[List[Point]] = Relationship(back_populates="task",
+                                                 sa_relationship_kwargs={"lazy": "joined"})
+    links: Optional[List[Link]] = Relationship(back_populates="task",
+                                               sa_relationship_kwargs={"lazy": "joined"})
 
 
 class PointResponse(BaseModel):
@@ -58,5 +65,10 @@ class LinkResponse(BaseModel):
 class TaskResponse(BaseModel):
     id: uuid.UUID
     status: str
-    points: Optional[List[Point]] = None
-    links: Optional[List[Link]] = None
+
+
+class TaskDataResponse(BaseModel):
+    id: uuid.UUID
+    status: str
+    points: List[PointResponse] = []
+    links: List[LinkResponse] = []

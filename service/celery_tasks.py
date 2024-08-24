@@ -18,8 +18,11 @@ def set_reverse_geocoding(*args, **kwargs) -> None:
     coord_list = list()
 
     for coordinates in all_coordinates:
-        reverse_geocode_result = reverse_geocode.get((coordinates.latitude,
-                                                      coordinates.longitude))
+        try:
+            reverse_geocode_result = reverse_geocode.get((coordinates.latitude,
+                                                          coordinates.longitude))
+        except ValueError:
+            reverse_geocode_result = ''
 
         coord_list.append(Point(name=coordinates.country,
                                 address=json.dumps(reverse_geocode_result),
