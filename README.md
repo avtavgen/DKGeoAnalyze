@@ -1,6 +1,6 @@
-# fastapi-example
+# Reverse geocoding and distance measuring application
 
-FastAPI Rest example project.
+FastAPI application for reverse geocoding and distance measuring between large amount of different geographical data.
 
 ## Preconditions:
 
