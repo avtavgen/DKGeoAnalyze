@@ -6,11 +6,12 @@ FastAPI application for reverse geocoding and distance measuring between large a
 
 - Python 3.12
 - PostgreSQL
+- FastAPI
 
 ## Clone the project
 
 ```
-git clone https://github.com/avtavgen/DKTest.git
+git clone https://github.com/avtavgen/DKGeoAnalyze.git
 ```
 
 ## Run local
